@@ -11,7 +11,6 @@ DB_USERNAME = os.environ.get('DB_USERNAME')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
 # Configure the SQLAlchemy part of the app instance
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://admin123:#WRwinInferno2@flasktestdbserver.database.windows.net/testdb?driver=ODBC+Driver+17+for+SQL+Server'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}?driver=ODBC+Driver+17+for+SQL+Server'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
