@@ -1,19 +1,18 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import logging
-from logging.handlers import RotatingFileHandler
-
+import os
 
 app = Flask(__name__)
 
-# Configure logging
-if not app.debug:
-    handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
-    handler.setLevel(logging.ERROR)
-    app.logger.addHandler(handler)
+# Read database credentials from environment variables
+DB_SERVER = os.environ.get('DB_SERVER')
+DB_NAME = os.environ.get('DB_NAME')
+DB_USERNAME = os.environ.get('DB_USERNAME')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
 # Configure the SQLAlchemy part of the app instance
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://admin123:#WRwinInferno2@flasktestdbserver.database.windows.net/testdb?driver=ODBC+Driver+17+for+SQL+Server'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://admin123:#WRwinInferno2@flasktestdbserver.database.windows.net/testdb?driver=ODBC+Driver+17+for+SQL+Server'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}?driver=ODBC+Driver+17+for+SQL+Server'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Create the SQLAlchemy db instance
@@ -40,7 +39,6 @@ def get_employees():
         employees = Employee.query.all()
         return jsonify([{"ID": emp.ID, "FirstName": emp.FirstName, "LastName": emp.LastName} for emp in employees])
     except Exception as e:
-        app.logger.error('Error fetching employees: %s', e)
         return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == "__main__":
